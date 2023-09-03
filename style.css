@@ -1,0 +1,23 @@
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.container {
+  display: grid;
+  justify-content: center;
+}
+
+.table {
+  display: table;
+}
+
+.cell {
+  display: table-cell;
+  border: 1px solid black;
+}
+
+.row {
+  display: table-row;
+}
