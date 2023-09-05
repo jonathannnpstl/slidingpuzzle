@@ -1,14 +1,14 @@
 const BOARD_SIZE = 400;
-const SIZE = 4;
+const SIZE = 2;
 const NUMBER_OF_TILES = SIZE ** 2;
 const TILES_SIZE = BOARD_SIZE / NUMBER_OF_TILES;
 
 class Board {
   constructor(size) {
     this.size = size;
-    this.board_size = 500;
+    this.board_size = 500; //board size depends on the size of container
     this.tiles_size = this.board_size / this.size;
-    this.state = []; //the placement of tiles using an array (e.g., [1,2,3,0])
+    this.state = []; //the placement of tiles using 2d array (e.g., [[1,2],[3,0]])
     this.goalState = [];
     this.emptyTileRow = null;
     this.emptyTileCol = null;
@@ -20,17 +20,17 @@ class Board {
     let number = 1;
     for (let row = 0; row < this.size; row++) {
       let rowDiv = this.createRows();
+      let rowGoal = [];
       for (let col = 0; col < this.size; col++) {
         if (col == this.size - 1 && row == this.size - 1) {
           number = 0; //mark the empty tile 0
         }
-        this.goalState = [...this.goalState, number]; //make the goalState
+        rowGoal = [...rowGoal, number];
         rowDiv.append(this.createTile(number++, row, col));
       }
+      this.goalState = [...this.goalState, rowGoal]; //make the goalState
       board.append(rowDiv);
     }
-    this.shuffle();
-    // console.log(this.state);
   }
 
   createTile(number, row, col) {
@@ -62,6 +62,15 @@ class Board {
     if (this.state[this.size - 1][this.state - 1] == 0) {
       //checks if state is same as goal
     }
+
+    /**
+     * U - Up
+     * R - Right
+     * L - Left
+     * D - Down
+     *
+     *
+     */
     console.log(this);
   }
 
@@ -71,8 +80,25 @@ class Board {
     $(node2).html(temp);
   }
 
+  make2dstate(state) {
+    let new2dState = [];
+    let index = 0;
+    for (let i = 0; i < this.size; i++) {
+      let row = [];
+      for (let j = 0; j < this.size; j++) {
+        row = [...row, state[index++]];
+      }
+      new2dState = [...new2dState, row];
+    }
+
+    return new2dState;
+  }
+
   shuffle() {
-    var state = [...this.goalState]; //make a copy of goalState
+    //make a 1d copy of goalState for easier logic
+    var state = [...this.goalState].flatMap((el) => {
+      return el;
+    });
 
     //outer for loop for more randomized state
     for (let i = 0; i < this.size ** 2; i++) {
@@ -86,7 +112,7 @@ class Board {
     }
 
     if (!this.isSolvable(state)) {
-      var newPuzzle = [...this.makeSolvable(state)];
+      state = [...this.makeSolvable(state)];
       //final check if puzzle is solvable
       // if (this.isSolvable(newPuzzle)) {
       //   state = newPuzzle;
@@ -94,14 +120,12 @@ class Board {
       //   do re-shuffle
       //   console.log("Error");
       // }
-      this.state = [...newPuzzle];
     }
-    const swapped = new Set();
+
+    this.state = this.make2dstate(state); //set the shuffled state
 
     // this.createBoard should just rerender or manipulate the board???
   }
-
-  make2d;
 
   isSolvable(state) {
     let numberOfInversion = 0;
@@ -172,14 +196,23 @@ class Board {
     this.setEmptyTilePos(state); //reset incase changes of empty tile pos
     return solvableState;
   }
+}
 
-  start() {
-    console.log("Start");
+class Solver {
+  constructor(state, goalState) {
+    this.state = state;
+    this.goalState = goalState;
   }
 }
 
 const board = new Board(SIZE);
 
+$("#shuffle-btn").click(() => {
+  board.shuffle();
+});
+
 $("#solve-btn").click(() => {
-  console.log(board.state);
+  // let movePath = AStar(board.state, board.goalState);
+  if (board.state.length < 1) return;
+  console.log(board.state, board.goalState);
 });
