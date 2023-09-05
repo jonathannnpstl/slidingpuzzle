@@ -3,7 +3,6 @@ import { Solver } from "./solver.js";
 const BOARD_SIZE = 400;
 const SIZE = 2;
 const NUMBER_OF_TILES = SIZE ** 2;
-const TILES_SIZE = BOARD_SIZE / NUMBER_OF_TILES;
 
 class Board {
   constructor(size) {
@@ -207,9 +206,9 @@ $("#shuffle-btn").click(() => {
 });
 
 $("#solve-btn").click(() => {
-  // let movePath = AStar(board.state, board.goal_state);
   if (board.state.length < 1) return;
-  console.log(board.goal_state, board.goal_state);
+  console.log(board.state, board.goal_state);
   const init = new Solver(board);
   let path = init.solveAStar();
+  console.log(path);
 });
