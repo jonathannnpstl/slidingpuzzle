@@ -7,23 +7,25 @@ export class Solver {
     this.size = boardInstance.size;
     this.queue = [];
     this.visited = new Set();
-    this.limit = 100;
+    this.limit = 10000;
   }
 
   clone(state) {
     return JSON.parse(JSON.stringify(state));
   }
 
-  expand(state) {
+  expand(current_state) {
     let new_state = null;
-    let row = state.empty_tile_row;
-    let col = state.empty_tile_col;
+    let state = current_state.state;
+    let row = current_state.empty_tile_row;
+    let col = current_state.empty_tile_col;
     console.log("empty tile pos: ", row, col);
-    console.log("state path: ", state.path);
-    //Up;
+    console.log("state path: ", current_state.path);
+
+    //Up
     if (row > 0) {
       console.log("Up");
-      new_state = this.clone(state.state);
+      new_state = this.clone(state);
       let temp = new_state[row - 1][col];
       new_state[row - 1][col] = 0;
       new_state[row][col] = temp;
@@ -34,16 +36,17 @@ export class Solver {
           new_state,
           this.goal_state,
           this.size,
-          state.path + "U"
+          current_state.path + "U"
         );
         this.queue.push(new_board_state);
         this.limit -= 1;
       }
     }
+
     //Down
-    if (row < state.size - 1) {
+    if (row < this.size - 1) {
       console.log("Down");
-      new_state = this.clone(state.state);
+      new_state = this.clone(state);
       let temp = new_state[row + 1][col];
       new_state[row + 1][col] = 0;
       new_state[row][col] = temp;
@@ -54,62 +57,60 @@ export class Solver {
           new_state,
           this.goal_state,
           this.size,
-          state.path + "D"
+          current_state.path + "D"
         );
         this.queue.push(new_board_state);
         this.limit -= 1;
       }
     }
+
     //Left
     if (col > 0) {
-      new_state = this.clone(state.state);
       console.log("Left");
+      new_state = this.clone(state);
       let temp = new_state[row][col - 1];
       new_state[row][col - 1] = 0;
       new_state[row][col] = temp;
-      console.log(new_state.flat().toString());
-      console.log(new_state);
       if (!this.visited.has(new_state.flat().toString())) {
+        console.log(new_state.flat().toString());
+        console.log(new_state);
         let new_board_state = new BoardState(
           new_state,
           this.goal_state,
           this.size,
-          state.path + "L"
+          current_state.path + "L"
         );
         this.queue.push(new_board_state);
         this.limit -= 1;
       }
     }
+
     //Right
-    if (col > this.size - 1) {
+    if (col < this.size - 1) {
       console.log("Right");
-      new_state = this.clone(state.state);
+      new_state = this.clone(state);
       let temp = new_state[row][col + 1];
       new_state[row][col + 1] = 0;
       new_state[row][col] = temp;
-      console.log(new_state.flat().toString());
-      console.log(new_state);
       if (!this.visited.has(new_state.flat().toString())) {
+        console.log(new_state.flat().toString());
+        console.log(new_state);
         let new_board_state = new BoardState(
           new_state,
           this.goal_state,
           this.size,
-          state.path + "R"
+          current_state.path + "R"
         );
         this.queue.push(new_board_state);
         this.limit -= 1;
       }
     }
+
     console.log("queue after expand: ", this.queue);
   }
 
   solveAStar() {
-    let init_state = new BoardState(
-      this.state,
-      this.goal_state,
-      this.size,
-      " "
-    );
+    let init_state = new BoardState(this.state, this.goal_state, this.size, "");
     this.queue.push(init_state);
     console.log("queue: ", this.queue);
     while (this.queue.length > 0 && this.limit > 0) {
@@ -119,7 +120,7 @@ export class Solver {
         current_state.state.flat().toString() ===
         this.goal_state.flat().toString()
       ) {
-        return current_state.getPath();
+        return current_state;
       }
       this.expand(current_state);
     }
