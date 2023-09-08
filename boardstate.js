@@ -4,7 +4,7 @@ export class BoardState {
     this.goal_state = goal_state;
     // this.value = value;
     this.size = size;
-    this.path = this.path + path;
+    this.path = path;
     this.empty_tile_row = null;
     this.empty_tile_col = null;
     this.setEmptyTilePos();
