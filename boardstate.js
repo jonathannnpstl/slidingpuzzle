@@ -1,5 +1,6 @@
 export class BoardState {
-  constructor(state, goal_state, size, path = " ") {
+  constructor(value, state, goal_state, size, path = " ") {
+    this.value = value;
     this.state = state;
     this.goal_state = goal_state;
     // this.value = value;
@@ -8,6 +9,7 @@ export class BoardState {
     this.empty_tile_row = null;
     this.empty_tile_col = null;
     this.setEmptyTilePos();
+    this.setValue();
   }
 
   getPath() {
@@ -15,6 +17,25 @@ export class BoardState {
      * get the path from state to goal state
      */
     return this.path;
+  }
+
+  setValue() {
+    this.value = this.misplacedTiles();
+  }
+
+  misplacedTiles() {
+    let result = 0;
+    for (let i = 0; i < this.state.length; i++) {
+      for (let j = 0; j < this.state.length; j++) {
+        if (
+          this.state[i][j] != this.goal_state[i][j] &&
+          this.state[i][j] != 0
+        ) {
+          result++;
+        }
+      }
+    }
+    return result;
   }
 
   setEmptyTilePos() {
