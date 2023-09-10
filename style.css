@@ -6,20 +6,16 @@ body {
 
 .container {
   display: grid;
+  place-items: center;
   justify-content: center;
   /* position: relative; */
 }
 
-.table {
-  display: table;
+.board {
+  width: 500px;
+  height: 500px;
 }
 
-.cell {
-  display: table-cell;
+.board {
   position: relative;
-  border: 1px solid black;
-}
-
-.row {
-  display: table-row;
 }

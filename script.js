@@ -1,7 +1,7 @@
 import { Solver } from "./solver.js";
 
 const BOARD_SIZE = 400;
-const SIZE = 2;
+const SIZE = 3;
 const NUMBER_OF_TILES = SIZE ** 2;
 
 class Board {
@@ -20,45 +20,51 @@ class Board {
     let board = $(".board");
     let number = 1;
     for (let row = 0; row < this.size; row++) {
-      let row_div = this.createRows();
       let row_goal = [];
       for (let col = 0; col < this.size; col++) {
         if (col == this.size - 1 && row == this.size - 1) {
           number = 0; //mark the empty tile 0
         }
         row_goal = [...row_goal, number];
-        row_div.append(this.createTile(number++, row, col));
+        board.append(this.createTile(number++, row, col));
       }
       this.goal_state = [...this.goal_state, row_goal]; //make the goal_state
-      board.append(row_div);
     }
   }
 
   createTile(number, row, col) {
+    if (number == 0) return;
     return $("<div/>", {
       "data-pos": `${row},${col}`,
       append: `<b>${number}</b>`,
-      class: "cell",
+      class: "tile",
       id: number,
       css: {
+        position: "absolute",
+        border: "1px solid white",
         width: `${this.tiles_size}px`,
         height: `${this.tiles_size}px`,
-        // background: `url("\\neom-jTxhUMyPTrE-unsplash.jpg")`,
-        // backgroundPosition: "bottom",
+        color: "black",
+        background: `url("\\neom-jTxhUMyPTrE-unsplash.jpg")`,
+        //tongue ina negative lang pala katapat mo kainisssska
+        backgroundPosition: ` -${col * this.tiles_size}px -${
+          row * this.tiles_size
+        }px`,
+        backgroundSize: `${this.board_size}px ${this.board_size}px`,
+        left: `${col * this.tiles_size}px`,
+        top: `${row * this.tiles_size}px`,
+        transitionDuration: "0.5s",
+        cursor: "pointer",
       },
       on: {
-        click: () => this.moveTile(console.log(row)),
+        click: () => this.moveTile(number),
       },
     });
   }
 
-  createRows() {
-    return $("<div/>", {
-      class: "row",
-    });
-  }
+  moveTile(number) {
+    if (this.state.length < 1 || this.state == null) return;
 
-  moveTile() {
     //every move, check if 0 pos is same as in the goal pos
     if (this.state[this.size - 1][this.state - 1] == 0) {
       //checks if state is same as goal
@@ -72,16 +78,13 @@ class Board {
      *
      *
      */
-    console.log(this);
-  }
-
-  swap(node1, node2) {
-    const temp = $(node1).html();
-    $(node1).html($(node2).html());
-    $(node2).html(temp);
   }
 
   make2dstate(state) {
+    /**
+     * function to make the array 2d
+     *
+     */
     let new_2d_state = [];
     let index = 0;
     for (let i = 0; i < this.size; i++) {
@@ -95,7 +98,27 @@ class Board {
     return new_2d_state;
   }
 
+  placeTiles() {
+    for (let row = 0; row < this.size; row++) {
+      for (let col = 0; col < this.size; col++) {
+        if (this.state[row][col] != 0) {
+          $(`#${this.state[row][col]}`).css(
+            "top",
+            `${this.tiles_size * row}px`
+          );
+          $(`#${this.state[row][col]}`).css(
+            "left",
+            `${this.tiles_size * col}px`
+          );
+        }
+      }
+    }
+  }
+
   shuffle() {
+    /**
+     * function to shuffle the puzzle
+     */
     //make a 1d copy of goal_state for easier logic
     var state = [...this.goal_state].flatMap((el) => {
       return el;
@@ -114,21 +137,18 @@ class Board {
 
     if (!this.isSolvable(state)) {
       state = [...this.makeSolvable(state)];
-      //final check if puzzle is solvable
-      // if (this.isSolvable(newPuzzle)) {
-      //   state = newPuzzle;
-      // } else {
-      //   do re-shuffle
-      //   console.log("Error");
-      // }
     }
 
     this.state = this.make2dstate(state); //set the shuffled state
 
     // this.createBoard should just rerender or manipulate the board???
+    this.placeTiles();
   }
 
   isSolvable(state) {
+    /**
+     * function to determine if shuffled puzzle is solvable
+     */
     let number_of_inversion = 0;
     for (let i = 0; i < state.length - 1; i++) {
       if (state[i] == 0) continue; //empty tile not included
@@ -166,6 +186,9 @@ class Board {
   }
 
   setEmptyTilePos(state) {
+    /**
+     * function to set the position (row & col) of the empty tile
+     */
     state.forEach((el, index) => {
       if (el == 0) {
         this.empty_tile_row = Math.floor(index / this.size);
@@ -175,6 +198,10 @@ class Board {
   }
 
   makeSolvable(state) {
+    /**
+     * function to make the puzzle solvable
+     */
+
     //makes sure the size isn't 1 or less
     let solvable_state = [...state];
     if (this.size < 2) return;
