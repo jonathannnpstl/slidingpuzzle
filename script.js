@@ -1,8 +1,6 @@
 import { Solver } from "./solver.js";
 
-const BOARD_SIZE = 400;
-const SIZE = 2;
-const NUMBER_OF_TILES = SIZE ** 2;
+const SIZE = 3;
 
 class Board {
   constructor(size) {
@@ -13,7 +11,22 @@ class Board {
     this.goal_state = [];
     this.empty_tile_row = null;
     this.empty_tile_col = null;
+    this.started = false;
+    this.solved = false;
+    this.start();
+  }
+
+  start() {
+    if (this.solved) return;
+    if (this.started) {
+      this.shuffle();
+      return;
+    }
     this.createBoard();
+    setTimeout(() => {
+      this.shuffle();
+    }, 2000);
+    this.started = true;
   }
 
   createBoard() {
@@ -111,6 +124,7 @@ class Board {
       //checks if state is same as goal
       if (this.goal_state.flat().toString() == this.state.flat().toString()) {
         console.log("Congrats!!!");
+        this.solved = true;
         this.someFunc();
         return;
       }
@@ -160,7 +174,6 @@ class Board {
         $(`#${this.state[row][col]}`).css("left", `${this.tiles_size * col}px`);
       }
     }
-    console.log(this.state);
   }
 
   shuffle() {
@@ -233,6 +246,11 @@ class Board {
     }
   }
 
+  /**
+   *
+   * @param {2d array} state
+   * remove this if possible
+   */
   setEmptyTilePos(state) {
     /**
      * function to set the position (row & col) of the empty tile
@@ -278,7 +296,7 @@ class Board {
 const board = new Board(SIZE);
 
 $("#shuffle-btn").click(() => {
-  board.shuffle();
+  board.start();
 });
 
 $("#solve-btn").click(() => {
