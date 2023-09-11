@@ -1,7 +1,7 @@
 import { Solver } from "./solver.js";
 
 const BOARD_SIZE = 400;
-const SIZE = 3;
+const SIZE = 2;
 const NUMBER_OF_TILES = SIZE ** 2;
 
 class Board {
@@ -33,15 +33,15 @@ class Board {
   }
 
   createTile(number, row, col) {
-    if (number == 0) return;
+    // if (number == 0) return;
     return $("<div/>", {
-      "data-pos": `${row},${col}`,
+      // "data-pos": `${row},${col}`,
       append: `<b>${number}</b>`,
       class: "tile",
       id: number,
       css: {
         position: "absolute",
-        border: "1px solid white",
+        scale: "0.99",
         width: `${this.tiles_size}px`,
         height: `${this.tiles_size}px`,
         color: "black",
@@ -53,8 +53,9 @@ class Board {
         backgroundSize: `${this.board_size}px ${this.board_size}px`,
         left: `${col * this.tiles_size}px`,
         top: `${row * this.tiles_size}px`,
-        transitionDuration: "0.5s",
-        cursor: "pointer",
+        transitionDuration: ".3s",
+        cursor: `${number == 0 ? "default" : "pointer"}`,
+        opacity: `${number == 0 ? "0" : "1"}`,
       },
       on: {
         click: () => this.moveTile(number),
@@ -62,22 +63,76 @@ class Board {
     });
   }
 
-  moveTile(number) {
-    if (this.state.length < 1 || this.state == null) return;
+  clone(state) {
+    return JSON.parse(JSON.stringify(state));
+  }
 
-    //every move, check if 0 pos is same as in the goal pos
-    if (this.state[this.size - 1][this.state - 1] == 0) {
-      //checks if state is same as goal
+  moveTile(number) {
+    if (this.state.length <= 0 || this.state == null) return;
+    if (this.goal_state.flat().toString() == this.state.flat().toString()) {
+      return;
     }
 
-    /**
-     * U - Up
-     * R - Right
-     * L - Left
-     * D - Down
-     *
-     *
-     */
+    let [row, col] = this.findTilePos(number);
+    let [empty_tile_row, empty_tile_col] = this.findTilePos(0);
+    var state_clone = this.clone(this.state);
+
+    //Up
+    if (empty_tile_col == col && row - 1 == empty_tile_row) {
+      console.log("Up");
+      state_clone[empty_tile_row][empty_tile_col] = number;
+      state_clone[row][col] = 0;
+    }
+    //Down
+    if (empty_tile_col == col && row + 1 == empty_tile_row) {
+      console.log("Down");
+      state_clone[empty_tile_row][empty_tile_col] = number;
+      state_clone[row][col] = 0;
+    }
+    //Left
+    if (empty_tile_row == row && col - 1 == empty_tile_col) {
+      console.log("Left");
+      state_clone[empty_tile_row][empty_tile_col] = number;
+      state_clone[row][col] = 0;
+    }
+    //Right
+    if (empty_tile_row == row && col + 1 == empty_tile_col) {
+      console.log("Right");
+      state_clone[empty_tile_row][empty_tile_col] = number;
+      state_clone[row][col] = 0;
+    }
+
+    this.state = [...state_clone];
+    this.placeTiles();
+    console.log(this.state[this.size - 1][this.size - 1] == 0);
+
+    //every move, check if 0 pos is same as in the goal pos
+    if (this.state[this.size - 1][this.size - 1] === 0) {
+      //checks if state is same as goal
+      if (this.goal_state.flat().toString() == this.state.flat().toString()) {
+        console.log("Congrats!!!");
+        this.someFunc();
+        return;
+      }
+    }
+  }
+
+  someFunc() {
+    $(".tile").css("scale", "1");
+    $(".tile").css("cursor", "default");
+    setTimeout(() => {
+      $("#0").css("opacity", "1");
+    }, 200);
+  }
+
+  findTilePos(number) {
+    for (let row = 0; row < this.size; row++) {
+      for (let col = 0; col < this.size; col++) {
+        if (this.state[row][col] == number) {
+          return [row, col];
+        }
+      }
+    }
   }
 
   make2dstate(state) {
@@ -101,18 +156,11 @@ class Board {
   placeTiles() {
     for (let row = 0; row < this.size; row++) {
       for (let col = 0; col < this.size; col++) {
-        if (this.state[row][col] != 0) {
-          $(`#${this.state[row][col]}`).css(
-            "top",
-            `${this.tiles_size * row}px`
-          );
-          $(`#${this.state[row][col]}`).css(
-            "left",
-            `${this.tiles_size * col}px`
-          );
-        }
+        $(`#${this.state[row][col]}`).css("top", `${this.tiles_size * row}px`);
+        $(`#${this.state[row][col]}`).css("left", `${this.tiles_size * col}px`);
       }
     }
+    console.log(this.state);
   }
 
   shuffle() {
@@ -195,6 +243,7 @@ class Board {
         this.empty_tile_col = index % this.size;
       }
     });
+    console.log("empty tile func: ", this.empty_tile_row, this.empty_tile_col);
   }
 
   makeSolvable(state) {
