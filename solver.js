@@ -10,7 +10,7 @@ export class Solver {
       return a.value < b.value;
     });
     this.visited = new Set();
-    this.limit = 1000;
+    this.limit = 100000;
   }
 
   clone(state) {
@@ -22,11 +22,11 @@ export class Solver {
     let state = current_state.state;
     let row = current_state.empty_tile_row;
     let col = current_state.empty_tile_col;
-    console.log("empty tile pos: ", row, col);
-    console.log("state path: ", current_state.path);
+    // console.log("empty tile pos: ", row, col);
+    // console.log("state path: ", current_state.path);
     //Up
     if (row > 0) {
-      console.log("Up");
+      // console.log("Up");
       new_state = this.clone(state);
       let temp = new_state[row - 1][col];
       new_state[row - 1][col] = 0;
@@ -45,7 +45,7 @@ export class Solver {
 
     //Down
     if (row < this.size - 1) {
-      console.log("Down");
+      // console.log("Down");
       new_state = this.clone(state);
       let temp = new_state[row + 1][col];
       new_state[row + 1][col] = 0;
@@ -64,7 +64,7 @@ export class Solver {
 
     //Left
     if (col > 0) {
-      console.log("Left");
+      // console.log("Left");
       new_state = this.clone(state);
       let temp = new_state[row][col - 1];
       new_state[row][col - 1] = 0;
@@ -83,7 +83,7 @@ export class Solver {
 
     //Right
     if (col < this.size - 1) {
-      console.log("Right");
+      // console.log("Right");
       new_state = this.clone(state);
       let temp = new_state[row][col + 1];
       new_state[row][col + 1] = 0;
@@ -99,19 +99,19 @@ export class Solver {
         this.limit -= 1;
       }
     }
-    console.log("queue after expand: ", this.queue);
+    // console.log("queue after expand: ", this.queue);
   }
 
   solveAStar() {
     let init_state = new BoardState(this.state, this.goal_state, this.size, "");
     // this.queue.add(init_state);
     this.queue.add(init_state);
-    console.log("queue: ", this.queue);
+    // console.log("queue: ", this.queue);
     while (!this.queue.isEmpty() > 0 && this.limit > 0) {
       let current_state = this.queue.poll();
-      console.log("current state value: ", current_state.value);
+      // console.log("current state value: ", current_state.value);
       this.visited.add(current_state.state.flat().toString());
-      console.log("set: ", this.visited);
+      // console.log("set: ", this.visited);
       if (
         current_state.state.flat().toString() ===
         this.goal_state.flat().toString()

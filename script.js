@@ -58,7 +58,7 @@ class Board {
         width: `${this.tiles_size}px`,
         height: `${this.tiles_size}px`,
         color: "black",
-        background: `url("\\neom-jTxhUMyPTrE-unsplash.jpg")`,
+        background: `url("\\pic.jpg")`,
         //tongue ina negative lang pala katapat mo kainisssska
         backgroundPosition: ` -${col * this.tiles_size}px -${
           row * this.tiles_size
@@ -301,8 +301,11 @@ $("#shuffle-btn").click(() => {
 
 $("#solve-btn").click(() => {
   if (board.state.length < 1) return;
+  var startTime = new Date();
   console.log(board.state, board.goal_state);
   const init = new Solver(board);
   let path = init.solveAStar();
-  console.log(path);
+  console.log(path.path.length);
+  var endTime = new Date();
+  alert("Completed in: " + (endTime - startTime) + " milliseconds");
 });
