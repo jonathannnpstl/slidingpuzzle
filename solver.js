@@ -1,11 +1,14 @@
 import { BoardState } from "./boardstate.js";
+import FastPriorityQueue from "./FastPriorityQueue.js";
 
 export class Solver {
   constructor(boardInstance) {
     this.state = boardInstance.state;
     this.goal_state = boardInstance.goal_state;
     this.size = boardInstance.size;
-    this.queue = [];
+    this.queue = new FastPriorityQueue(function (a, b) {
+      return a.value < b.value;
+    });
     this.visited = new Set();
     this.limit = 1000;
   }
@@ -35,7 +38,7 @@ export class Solver {
           this.size,
           current_state.path + "U"
         );
-        this.queue.push(new_board_state);
+        this.queue.add(new_board_state);
         this.limit -= 1;
       }
     }
@@ -54,7 +57,7 @@ export class Solver {
           this.size,
           current_state.path + "D"
         );
-        this.queue.push(new_board_state);
+        this.queue.add(new_board_state);
         this.limit -= 1;
       }
     }
@@ -73,7 +76,7 @@ export class Solver {
           this.size,
           current_state.path + "L"
         );
-        this.queue.push(new_board_state);
+        this.queue.add(new_board_state);
         this.limit -= 1;
       }
     }
@@ -92,7 +95,7 @@ export class Solver {
           this.size,
           current_state.path + "R"
         );
-        this.queue.push(new_board_state);
+        this.queue.add(new_board_state);
         this.limit -= 1;
       }
     }
@@ -100,13 +103,13 @@ export class Solver {
   }
 
   solveAStar() {
-    let qu = new PriorityQueue();
     let init_state = new BoardState(this.state, this.goal_state, this.size, "");
-    this.queue.push(init_state);
+    // this.queue.add(init_state);
+    this.queue.add(init_state);
     console.log("queue: ", this.queue);
-    while (this.queue.length > 0 && this.limit > 0) {
-      let current_state = this.queue.shift();
-
+    while (!this.queue.isEmpty() > 0 && this.limit > 0) {
+      let current_state = this.queue.poll();
+      console.log("current state value: ", current_state.value);
       this.visited.add(current_state.state.flat().toString());
       console.log("set: ", this.visited);
       if (

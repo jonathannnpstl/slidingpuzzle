@@ -1,9 +1,8 @@
 export class BoardState {
-  constructor(value, state, goal_state, size, path = " ") {
-    this.value = value;
+  constructor(state, goal_state, size, path = " ") {
     this.state = state;
     this.goal_state = goal_state;
-    // this.value = value;
+    this.value = null;
     this.size = size;
     this.path = path;
     this.empty_tile_row = null;
@@ -24,6 +23,7 @@ export class BoardState {
   }
 
   misplacedTiles() {
+    console.log(this.state, this.goal_state);
     let result = 0;
     for (let i = 0; i < this.state.length; i++) {
       for (let j = 0; j < this.state.length; j++) {
