@@ -1,6 +1,6 @@
 import { Solver } from "./solver.js";
 
-const SIZE = 3;
+const SIZE = 4;
 
 class Board {
   constructor(size) {
@@ -92,32 +92,27 @@ class Board {
 
     //Up
     if (empty_tile_col == col && row - 1 == empty_tile_row) {
-      console.log("Up");
       state_clone[empty_tile_row][empty_tile_col] = number;
       state_clone[row][col] = 0;
     }
     //Down
     if (empty_tile_col == col && row + 1 == empty_tile_row) {
-      console.log("Down");
       state_clone[empty_tile_row][empty_tile_col] = number;
       state_clone[row][col] = 0;
     }
     //Left
     if (empty_tile_row == row && col - 1 == empty_tile_col) {
-      console.log("Left");
       state_clone[empty_tile_row][empty_tile_col] = number;
       state_clone[row][col] = 0;
     }
     //Right
     if (empty_tile_row == row && col + 1 == empty_tile_col) {
-      console.log("Right");
       state_clone[empty_tile_row][empty_tile_col] = number;
       state_clone[row][col] = 0;
     }
 
     this.state = [...state_clone];
     this.placeTiles();
-    console.log(this.state[this.size - 1][this.size - 1] == 0);
   }
 
   isSolved() {
@@ -125,7 +120,6 @@ class Board {
     if (this.state[this.size - 1][this.size - 1] === 0) {
       //checks if state is same as goal
       if (this.goal_state.flat().toString() == this.state.flat().toString()) {
-        console.log("Congrats!!!");
         this.solved = true;
         this.someFunc();
         return true;
@@ -265,7 +259,6 @@ class Board {
         this.empty_tile_col = index % this.size;
       }
     });
-    console.log("empty tile func: ", this.empty_tile_row, this.empty_tile_col);
   }
 
   makeSolvable(state) {
@@ -306,13 +299,11 @@ $("#shuffle-btn").click(() => {
 $("#solve-btn").click(() => {
   if (board.state.length < 1) return;
   var startTime = new Date();
-  console.log(board.state, board.goal_state);
   const init = new Solver(board);
   let path = init.solveAStar();
-  // console.log(path.path_states);
-  console.log(path.path);
   var endTime = new Date();
-  console.log("Completed in: " + (endTime - startTime) + " milliseconds");
+  console.log("Miliseconds: ", endTime - startTime);
+  console.log(path.path);
   path.path_states.map((state, index) => {
     let run = setTimeout(() => {
       board.state = state;

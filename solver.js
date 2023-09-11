@@ -10,7 +10,7 @@ export class Solver {
       return a.value < b.value;
     });
     this.visited = new Set();
-    this.limit = 100000;
+    this.limit = 1000000;
   }
 
   clone(state) {
@@ -34,7 +34,8 @@ export class Solver {
           this.goal_state,
           this.size,
           current_state.path + "U",
-          current_state.path_states
+          current_state.path_states,
+          current_state.depth + 1
         );
         this.queue.add(new_board_state);
         this.limit -= 1;
@@ -53,7 +54,8 @@ export class Solver {
           this.goal_state,
           this.size,
           current_state.path + "D",
-          current_state.path_states
+          current_state.path_states,
+          current_state.depth + 1
         );
         this.queue.add(new_board_state);
         this.limit -= 1;
@@ -72,7 +74,8 @@ export class Solver {
           this.goal_state,
           this.size,
           current_state.path + "L",
-          current_state.path_states
+          current_state.path_states,
+          current_state.depth + 1
         );
         this.queue.add(new_board_state);
         this.limit -= 1;
@@ -91,12 +94,14 @@ export class Solver {
           this.goal_state,
           this.size,
           current_state.path + "R",
-          current_state.path_states
+          current_state.path_states,
+          current_state.depth + 1
         );
         this.queue.add(new_board_state);
         this.limit -= 1;
       }
     }
+    console.log(this.queue);
   }
 
   solveAStar() {
@@ -105,7 +110,8 @@ export class Solver {
       this.goal_state,
       this.size,
       "",
-      []
+      [],
+      0
     );
     this.queue.add(init_state);
     while (!this.queue.isEmpty() > 0 && this.limit > 0) {

@@ -1,11 +1,12 @@
 export class BoardState {
-  constructor(state, goal_state, size, path = " ", path_states) {
+  constructor(state, goal_state, size, path = " ", path_states, depth) {
     this.state = state;
     this.goal_state = goal_state;
     this.value = null;
     this.size = size;
     this.path = path;
     this.path_states = path_states;
+    this.depth = depth;
     this.empty_tile_row = null;
     this.empty_tile_col = null;
     this.setEmptyTilePos();
@@ -21,7 +22,7 @@ export class BoardState {
   }
 
   setValue() {
-    this.value = this.misplacedTiles();
+    this.value = this.misplacedTiles() + this.depth;
   }
 
   addPathState() {
