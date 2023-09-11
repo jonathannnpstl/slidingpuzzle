@@ -118,7 +118,9 @@ class Board {
     this.state = [...state_clone];
     this.placeTiles();
     console.log(this.state[this.size - 1][this.size - 1] == 0);
+  }
 
+  isSolved() {
     //every move, check if 0 pos is same as in the goal pos
     if (this.state[this.size - 1][this.size - 1] === 0) {
       //checks if state is same as goal
@@ -126,8 +128,9 @@ class Board {
         console.log("Congrats!!!");
         this.solved = true;
         this.someFunc();
-        return;
+        return true;
       }
+      return false;
     }
   }
 
@@ -174,6 +177,7 @@ class Board {
         $(`#${this.state[row][col]}`).css("left", `${this.tiles_size * col}px`);
       }
     }
+    if (this.isSolved()) return;
   }
 
   shuffle() {
@@ -305,7 +309,15 @@ $("#solve-btn").click(() => {
   console.log(board.state, board.goal_state);
   const init = new Solver(board);
   let path = init.solveAStar();
-  console.log(path.path.length);
+  // console.log(path.path_states);
+  console.log(path.path);
   var endTime = new Date();
-  alert("Completed in: " + (endTime - startTime) + " milliseconds");
+  console.log("Completed in: " + (endTime - startTime) + " milliseconds");
+  path.path_states.map((state, index) => {
+    let run = setTimeout(() => {
+      board.state = state;
+      board.placeTiles();
+      clearTimeout(run);
+    }, 500 * index);
+  });
 });
