@@ -1,6 +1,4 @@
-import { Solver } from "./solver.js";
-
-const SIZE = 4;
+const SIZE = 3;
 
 class Board {
   constructor(size) {
@@ -199,8 +197,6 @@ class Board {
     }
 
     this.state = this.make2dstate(state); //set the shuffled state
-
-    // this.createBoard should just rerender or manipulate the board???
     this.placeTiles();
   }
 
@@ -304,11 +300,13 @@ $("#solve-btn").click(() => {
   var endTime = new Date();
   console.log("Miliseconds: ", endTime - startTime);
   console.log(path.path);
+  console.log(path.path.length);
+
   path.path_states.map((state, index) => {
     let run = setTimeout(() => {
       board.state = state;
       board.placeTiles();
       clearTimeout(run);
-    }, 500 * index);
+    }, 400 * index);
   });
 });

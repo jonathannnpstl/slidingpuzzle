@@ -1,8 +1,8 @@
-export class BoardState {
+class BoardState {
   constructor(state, goal_state, size, path = " ", path_states, depth) {
     this.state = state;
     this.goal_state = goal_state;
-    this.value = null;
+    this.value = 0;
     this.size = size;
     this.path = path;
     this.path_states = path_states;
@@ -22,7 +22,7 @@ export class BoardState {
   }
 
   setValue() {
-    this.value = this.misplacedTiles() + this.depth;
+    this.value = this.depth + this.manhattanDistance();
   }
 
   addPathState() {
@@ -41,6 +41,28 @@ export class BoardState {
           this.state[i][j] != 0
         ) {
           result++;
+        }
+      }
+    }
+    return result;
+  }
+
+  manhattanDistance() {
+    var result = 0;
+
+    for (var i = 0; i < this.state.length; i++) {
+      for (var j = 0; j < this.state[i].length; j++) {
+        var elem = this.state[i][j];
+        var found = false;
+        for (var h = 0; h < this.goal_state.length; h++) {
+          for (var k = 0; k < this.goal_state[h].length; k++) {
+            if (this.goal_state[h][k] == elem) {
+              result += Math.abs(h - i) + Math.abs(j - k);
+              found = true;
+              break;
+            }
+          }
+          if (found) break;
         }
       }
     }

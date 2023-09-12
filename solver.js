@@ -1,7 +1,4 @@
-import { BoardState } from "./boardstate.js";
-import FastPriorityQueue from "./FastPriorityQueue.js";
-
-export class Solver {
+class Solver {
   constructor(boardInstance) {
     this.state = boardInstance.state;
     this.goal_state = boardInstance.goal_state;
@@ -10,7 +7,7 @@ export class Solver {
       return a.value < b.value;
     });
     this.visited = new Set();
-    this.limit = 1000000;
+    this.limit = 100000;
   }
 
   clone(state) {
@@ -101,7 +98,6 @@ export class Solver {
         this.limit -= 1;
       }
     }
-    console.log(this.queue);
   }
 
   solveAStar() {
@@ -114,8 +110,11 @@ export class Solver {
       0
     );
     this.queue.add(init_state);
-    while (!this.queue.isEmpty() > 0 && this.limit > 0) {
+    while (!this.queue.isEmpty() && this.limit > 0) {
       let current_state = this.queue.poll();
+      console.log(this.queue);
+      console.log(current_state);
+      console.log(current_state.value);
       this.visited.add(current_state.state.flat().toString());
       if (
         current_state.state.flat().toString() ===
