@@ -1,8 +1,10 @@
-const SIZE = 3;
+const DEFAULT_SIZE = 3;
+const DEFAULT_IMAGE = "pic.jpg";
 
 class Board {
-  constructor(size) {
+  constructor(size, image) {
     this.size = size;
+    this.img = image;
     this.board_size = 500; //board size depends on the size of container
     this.tiles_size = this.board_size / this.size;
     this.state = []; //the placement of tiles using 2d array (e.g., [[1,2],[3,0]])
@@ -23,7 +25,7 @@ class Board {
     this.createBoard();
     setTimeout(() => {
       this.shuffle();
-    }, 2000);
+    }, 1000);
     this.started = true;
   }
 
@@ -56,7 +58,7 @@ class Board {
         width: `${this.tiles_size}px`,
         height: `${this.tiles_size}px`,
         color: "black",
-        background: `url("\\pic.jpg")`,
+        background: `url("${this.img}")`,
         //tongue ina negative lang pala katapat mo kainisssska
         backgroundPosition: ` -${col * this.tiles_size}px -${
           row * this.tiles_size
@@ -286,7 +288,12 @@ class Board {
   }
 }
 
-const board = new Board(SIZE);
+var board = new Board(DEFAULT_SIZE, DEFAULT_IMAGE);
+
+function updateBoard() {
+  $(".board").empty();
+  board = new Board(size ?? DEFAULT_SIZE, url ?? DEFAULT_IMAGE);
+}
 
 $("#shuffle-btn").click(() => {
   board.start();

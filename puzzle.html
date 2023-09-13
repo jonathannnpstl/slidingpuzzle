@@ -12,7 +12,7 @@
             box-sizing: border-box;
         }
 
-        .container {
+        .board-container {
             display: grid;
             place-items: center;
             justify-content: center;
@@ -23,8 +23,78 @@
             height: 500px;
         }
 
+        .sidebar {
+            position: fixed;
+            height: 100vh;
+            width: 200px;
+            left: 0;
+            z-index: 2;
+        }
+
         .board {
             position: relative;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        /* Hide default HTML checkbox */
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        /* The slider */
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+        input:checked+.slider {
+            background-color: #2196F3;
+        }
+
+        input:focus+.slider {
+            box-shadow: 0 0 1px #2196F3;
+        }
+
+        input:checked+.slider:before {
+            -webkit-transform: translateX(26px);
+            -ms-transform: translateX(26px);
+            transform: translateX(26px);
+        }
+
+        /* Rounded sliders */
+        .slider.round {
+            border-radius: 34px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
         }
     </style>
 </head>
@@ -32,13 +102,37 @@
 <body>
     <h1>Sliding Puzzle</h1>
     <div class="container">
+        <div class="sidebar">
+            <div style="display:none;position:fixed;">
+                <img id="art" src="" alt="puzzle image" /><a id="download"></a>
+                <input id="img_file" type="file" accept="image/png,image/gif,image/jpeg,image/webp" />
+                <input id="img_file" type="file" />
+            </div>
+            <div class="button" onclick="img_file.click()">Upload Image</div>
+            <label for="size">Size:</label>
+            <select id="size" name="size">
+                <option value="2">2</option>
+                <option value="3" selected>3</option>
+                <option value="4">4</option>
+            </select>
+
+            <p>Numbers</p>
+            <label class="switch">
+                <input type="checkbox">
+                <span class="slider round"></span>
+            </label>
+            <button id="shuffle-btn" class="shuffle-btn"><span>Shuffle</span></button>
+            <button id="solve-btn" class="solve-btn"><span>Solve</span></button>
+        </div>
         <div class="board-container">
             <div id="board" class="board">
                 <!--populated by divs-->
             </div>
         </div>
-        <button id="shuffle-btn" class="shuffle-btn"><span>Shuffle</span></button>
-        <button id="solve-btn" class="solve-btn"><span>Solve</span></button>
+
+        <div class="image">
+
+        </div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
         integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
@@ -47,6 +141,25 @@
     <script src="./boardstate.js"></script>
     <script src="./solver.js"></script>
     <script src="./script.js"></script>
+    <script>
+
+        var img_file = document.getElementById('img_file'), img = document.getElementById("art"), size_el = document.getElementById("size"), file;
+        img_file.addEventListener('change', configure);
+        size_el.addEventListener('change', configure);
+
+        function configure() {
+            file = img_file.files[0];
+            size = size_el.value
+            url = file ? window.URL.createObjectURL(file) : null
+            img.src = url ?? DEFAULT_IMAGE;
+            updateBoard()
+        }
+
+
+
+
+
+    </script>
 </body>
 
 </html>
