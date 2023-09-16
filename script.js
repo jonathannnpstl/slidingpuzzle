@@ -13,10 +13,12 @@ class Board {
     this.empty_tile_col = null;
     this.started = false;
     this.solved = false;
+    this.moves = 0;
     this.start();
   }
 
   start() {
+    console.log(this.size);
     if (this.solved) return;
     if (this.started) {
       this.shuffle();
@@ -46,10 +48,8 @@ class Board {
   }
 
   createTile(number, row, col) {
-    // if (number == 0) return;
     return $("<div/>", {
-      // "data-pos": `${row},${col}`,
-      append: `<b>${number}</b>`,
+      append: `<p class="number">${number}</>`,
       class: "tile",
       id: number,
       css: {
@@ -121,18 +121,33 @@ class Board {
       //checks if state is same as goal
       if (this.goal_state.flat().toString() == this.state.flat().toString()) {
         this.solved = true;
-        this.someFunc();
+        this.playAgainPromt();
         return true;
       }
       return false;
     }
   }
 
-  someFunc() {
+  playAgainPromt() {
+    let board = $(".board");
     $(".tile").css("scale", "1");
     $(".tile").css("cursor", "default");
     setTimeout(() => {
       $("#0").css("opacity", "1");
+      $("<button/>", {
+        append: "<span>Play Again</span>",
+        class: "button play-again large",
+        css: {
+          position: "absolute",
+          left: "50%",
+          top: "50%",
+          transform: "translate(-50%,-50%)",
+        },
+        appendTo: board,
+        on: {
+          click: () => updateBoard(),
+        },
+      });
     }, 200);
   }
 
@@ -287,20 +302,33 @@ class Board {
     return solvable_state;
   }
 }
-
+var isSolving = false; //indicate if solving is done or not
 var board = new Board(DEFAULT_SIZE, DEFAULT_IMAGE);
 
 function updateBoard() {
   $(".board").empty();
+  size = size_el.value;
   board = new Board(size ?? DEFAULT_SIZE, url ?? DEFAULT_IMAGE);
 }
 
+function valid(size) {
+  typeof size == "number" ? true : false;
+}
+
+var run = [];
+function clearAllAnimation() {
+  run?.forEach((el) => clearTimeout(el));
+  isSolving = false;
+}
+
 $("#shuffle-btn").click(() => {
+  clearAllAnimation();
+  if (isSolving) return;
   board.start();
 });
 
 $("#solve-btn").click(() => {
-  if (board.state.length < 1) return;
+  if (board.state.length < 1 || isSolving) return;
   var startTime = new Date();
   const init = new Solver(board);
   let path = init.solveAStar();
@@ -308,12 +336,24 @@ $("#solve-btn").click(() => {
   console.log("Miliseconds: ", endTime - startTime);
   console.log(path.path);
   console.log(path.path.length);
-
-  path.path_states.map((state, index) => {
-    let run = setTimeout(() => {
-      board.state = state;
-      board.placeTiles();
-      clearTimeout(run);
-    }, 400 * index);
-  });
+  async function move() {
+    return new Promise((resolve) => {
+      path.path_states.map((state, index) => {
+        run.push(
+          setTimeout(() => {
+            board.state = state;
+            board.placeTiles();
+            clearTimeout(run);
+          }, 400 * index)
+        );
+      });
+      setTimeout(() => resolve("done"), path.path_states.length * 400);
+    });
+  }
+  async function execute() {
+    isSolving = true;
+    await move();
+    isSolving = false;
+  }
+  execute();
 });

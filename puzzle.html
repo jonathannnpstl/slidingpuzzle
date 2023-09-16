@@ -6,22 +6,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sliding Puzzle</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Ubuntu&display=swap');
+
         body {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: 'Ubuntu', sans-serif;
+            background-color: rgb(246, 246, 195);
+            color: white;
+        }
+
+        span {
+            font-family: 'Ubuntu', sans-serif;
         }
 
         .board-container {
             display: grid;
             place-items: center;
             justify-content: center;
+            height: 100vh;
+            width: 100vw;
         }
 
-        .board {
-            width: 500px;
-            height: 500px;
-        }
+
 
         .sidebar {
             position: fixed;
@@ -29,17 +37,51 @@
             width: 200px;
             left: 0;
             z-index: 2;
+            background-color: rgb(159, 190, 159);
+        }
+
+        table td {
+            text-align: center;
+            vertical-align: middle;
+            padding: 10px 0;
+        }
+
+        .number-switch {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
         }
 
         .board {
+            width: 500px;
+            height: 500px;
+            margin: auto;
             position: relative;
+            border-style: solid;
+            border-width: 7px;
+            border-color: rgb(80, 139, 80);
+        }
+
+        .tile {
+
+            display: grid;
+            place-items: center;
+        }
+
+        .number {
+            /* opacity: 0; */
+            visibility: hidden;
+            color: rgb(255, 255, 255);
+            font-size: 3rem;
+            -webkit-text-stroke-width: 1px;
+            -webkit-text-stroke-color: rgb(80, 139, 80);
         }
 
         .switch {
             position: relative;
             display: inline-block;
-            width: 60px;
-            height: 34px;
+            width: 48px;
+            height: 24px;
         }
 
         /* Hide default HTML checkbox */
@@ -58,34 +100,39 @@
             right: 0;
             bottom: 0;
             background-color: #ccc;
-            -webkit-transition: .4s;
-            transition: .4s;
+            -webkit-transition: .3s;
+            transition: .3s;
         }
 
         .slider:before {
             position: absolute;
             content: "";
-            height: 26px;
-            width: 26px;
+            height: 16px;
+            width: 16px;
             left: 4px;
             bottom: 4px;
             background-color: white;
-            -webkit-transition: .4s;
-            transition: .4s;
+            -webkit-transition: .3s;
+            transition: .3s;
         }
 
         input:checked+.slider {
-            background-color: #2196F3;
+            background-color: rgb(80, 139, 80);
+        }
+
+        input:checked+p {
+            color: black;
+            background-color: aqua;
         }
 
         input:focus+.slider {
-            box-shadow: 0 0 1px #2196F3;
+            box-shadow: 0 0 1px rgb(80, 139, 80);
         }
 
         input:checked+.slider:before {
             -webkit-transform: translateX(26px);
             -ms-transform: translateX(26px);
-            transform: translateX(26px);
+            transform: translateX(23px);
         }
 
         /* Rounded sliders */
@@ -96,33 +143,84 @@
         .slider.round:before {
             border-radius: 50%;
         }
+
+        .button {
+            font-size: 16px;
+            border: none;
+            background: none;
+            color: white;
+            background-color: rgb(80, 139, 80);
+            border-radius: 9px;
+            cursor: pointer;
+            width: 100%;
+            padding: 12px 28px;
+        }
+
+        .large {
+            padding: 18px 44px;
+            width: fit-content;
+
+        }
+
+        .button:hover {
+            background-color: rgb(94, 160, 94);
+        }
     </style>
 </head>
 
 <body>
-    <h1>Sliding Puzzle</h1>
     <div class="container">
         <div class="sidebar">
             <div style="display:none;position:fixed;">
                 <img id="art" src="" alt="puzzle image" /><a id="download"></a>
                 <input id="img_file" type="file" accept="image/png,image/gif,image/jpeg,image/webp" />
-                <input id="img_file" type="file" />
             </div>
-            <div class="button" onclick="img_file.click()">Upload Image</div>
-            <label for="size">Size:</label>
-            <select id="size" name="size">
-                <option value="2">2</option>
-                <option value="3" selected>3</option>
-                <option value="4">4</option>
-            </select>
+            <table style="margin: auto;">
+                <tbody>
+                    <tr>
+                        <td>
 
-            <p>Numbers</p>
-            <label class="switch">
-                <input type="checkbox">
-                <span class="slider round"></span>
-            </label>
-            <button id="shuffle-btn" class="shuffle-btn"><span>Shuffle</span></button>
-            <button id="solve-btn" class="solve-btn"><span>Solve</span></button>
+                            <button class="img-upload button" onclick="img_file.click()">Upload Image</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div style=" display: flex;
+                            justify-content: space-around;
+                            align-items: center;">
+                                <label for="size">Size:</label>
+                                <select id="size" name="size" style="padding: 6px 10px;">
+                                    <option value="2">2</option>
+                                    <option value="3" selected>3</option>
+                                    <option value="4">4</option>
+                                </select>
+                            </div>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="number-switch">
+                                <p>Numbers</p>
+                                <label class="switch" for="checkbox">
+                                    <input type="checkbox" id="checkbox">
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <button id="shuffle-btn" class="shuffle-btn button"><span>Shuffle</span></button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <button id="solve-btn" class="solve-btn button"><span>Solve</span></button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
         <div class="board-container">
             <div id="board" class="board">
@@ -142,17 +240,28 @@
     <script src="./solver.js"></script>
     <script src="./script.js"></script>
     <script>
+        let uploaded_image = null; //stores the previously uploaed image
 
-        var img_file = document.getElementById('img_file'), img = document.getElementById("art"), size_el = document.getElementById("size"), file;
+        var img_file = document.getElementById('img_file'), img = document.getElementById("art"), size_el = document.getElementById("size"), checkbox_el = document.getElementById("checkbox"), file, url;
         img_file.addEventListener('change', configure);
         size_el.addEventListener('change', configure);
 
+        checkbox_el.addEventListener('click', check)
+        function check() {
+
+            $('#checkbox').is(":checked") ? $(".number").css("visibility", "visible") : $(".number").css("visibility", "hidden")
+        }
+
         function configure() {
-            file = img_file.files[0];
+            clearAllAnimation()
+            if (!img_file.files[0] && uploaded_image) return;
+            file = img_file.files[0] ? img_file.files[0] : uploaded_image;
+            uploaded_image = file;
             size = size_el.value
-            url = file ? window.URL.createObjectURL(file) : null
+            url = file ? window.URL.createObjectURL(file) : uploaded_image ? window.URL.createObjectURL(uploaded_image) : null;
             img.src = url ?? DEFAULT_IMAGE;
             updateBoard()
+            check()
         }
 
 
