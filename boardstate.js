@@ -22,7 +22,7 @@ class BoardState {
   }
 
   setValue() {
-    this.value = this.depth + this.manhattanDistance();
+    this.value = this.value + this.manhattanDistance();
   }
 
   addPathState() {

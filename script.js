@@ -1,11 +1,12 @@
 const DEFAULT_SIZE = 3;
 const DEFAULT_IMAGE = "pic.jpg";
+var DEFAULT_BOARD_SIZE = 500;
 
 class Board {
   constructor(size, image) {
     this.size = size;
     this.img = image;
-    this.board_size = 500; //board size depends on the size of container
+    this.board_size = DEFAULT_BOARD_SIZE; //board size depends on the size of container
     this.tiles_size = this.board_size / this.size;
     this.state = []; //the placement of tiles using 2d array (e.g., [[1,2],[3,0]])
     this.goal_state = [];
@@ -24,10 +25,11 @@ class Board {
       this.shuffle();
       return;
     }
+    // this.createBoard();
+    // setTimeout(() => {
+    //   this.shuffle();
+    // }, 1000);
     this.createBoard();
-    setTimeout(() => {
-      this.shuffle();
-    }, 1000);
     this.started = true;
   }
 
@@ -49,7 +51,7 @@ class Board {
 
   createTile(number, row, col) {
     return $("<div/>", {
-      append: `<p class="number">${number}</>`,
+      append: `<p style="margin: 0" class="number">${number}</>`,
       class: "tile",
       id: number,
       css: {
@@ -328,7 +330,7 @@ $("#shuffle-btn").click(() => {
 });
 
 $("#solve-btn").click(() => {
-  if (board.state.length < 1 || isSolving) return;
+  if (board.state.length < 1 || isSolving || board.size > 3) return;
   var startTime = new Date();
   const init = new Solver(board);
   let path = init.solveAStar();
@@ -357,3 +359,22 @@ $("#solve-btn").click(() => {
   }
   execute();
 });
+
+window.addEventListener("resize", updateBoardSize);
+window.addEventListener("load", updateBoardSize);
+
+function updateBoardSize() {
+  if (window.innerWidth > 550) {
+    DEFAULT_BOARD_SIZE = 500;
+    console.log(DEFAULT_BOARD_SIZE);
+    $(".board").css("height", `${DEFAULT_BOARD_SIZE}`);
+    $(".board").css("width", `${DEFAULT_BOARD_SIZE}`);
+    updateBoard();
+  }
+  if (window.innerWidth < 550) {
+    DEFAULT_BOARD_SIZE = window.innerWidth - 50;
+    $(".board").css("height", `${DEFAULT_BOARD_SIZE}`);
+    $(".board").css("width", `${DEFAULT_BOARD_SIZE}`);
+    updateBoard();
+  }
+}
