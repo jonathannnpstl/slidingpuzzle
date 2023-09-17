@@ -1,11 +1,12 @@
 const DEFAULT_SIZE = 3;
 const DEFAULT_IMAGE = "pic.jpg";
+var DEFAULT_BOARD_SIZE = 500;
 
 class Board {
   constructor(size, image) {
     this.size = size;
     this.img = image;
-    this.board_size = 500; //board size depends on the size of container
+    this.board_size = DEFAULT_BOARD_SIZE; //board size depends on the size of container
     this.tiles_size = this.board_size / this.size;
     this.state = []; //the placement of tiles using 2d array (e.g., [[1,2],[3,0]])
     this.goal_state = [];
@@ -14,11 +15,11 @@ class Board {
     this.started = false;
     this.solved = false;
     this.moves = 0;
+    this.isAI = false;
     this.start();
   }
 
   start() {
-    console.log(this.size);
     if (this.solved) return;
     if (this.started) {
       this.shuffle();
@@ -28,6 +29,7 @@ class Board {
     setTimeout(() => {
       this.shuffle();
     }, 1000);
+
     this.started = true;
   }
 
@@ -49,7 +51,7 @@ class Board {
 
   createTile(number, row, col) {
     return $("<div/>", {
-      append: `<p class="number">${number}</>`,
+      append: `<p style="margin: 0" class="number">${number}</>`,
       class: "tile",
       id: number,
       css: {
@@ -86,6 +88,8 @@ class Board {
       return;
     }
 
+    this.isAI = false;
+
     let [row, col] = this.findTilePos(number);
     let [empty_tile_row, empty_tile_col] = this.findTilePos(0);
     var state_clone = this.clone(this.state);
@@ -109,6 +113,14 @@ class Board {
     if (empty_tile_row == row && col + 1 == empty_tile_col) {
       state_clone[empty_tile_row][empty_tile_col] = number;
       state_clone[row][col] = 0;
+    }
+
+    if (!this.isAI) {
+      $(".move")
+        .children("span")
+        .text(function (i, old_) {
+          return parseInt(old_) + 1;
+        });
     }
 
     this.state = [...state_clone];
@@ -145,7 +157,10 @@ class Board {
         },
         appendTo: board,
         on: {
-          click: () => updateBoard(),
+          click: () => {
+            $(".move").children("span").text(0);
+            updateBoard();
+          },
         },
       });
     }, 200);
@@ -186,6 +201,7 @@ class Board {
         $(`#${this.state[row][col]}`).css("left", `${this.tiles_size * col}px`);
       }
     }
+
     if (this.isSolved()) return;
   }
 
@@ -214,6 +230,7 @@ class Board {
     }
 
     this.state = this.make2dstate(state); //set the shuffled state
+
     this.placeTiles();
   }
 
@@ -309,6 +326,7 @@ function updateBoard() {
   $(".board").empty();
   size = size_el.value;
   board = new Board(size ?? DEFAULT_SIZE, url ?? DEFAULT_IMAGE);
+  check();
 }
 
 function valid(size) {
@@ -322,13 +340,14 @@ function clearAllAnimation() {
 }
 
 $("#shuffle-btn").click(() => {
+  $(".move").children("span").text(0);
   clearAllAnimation();
   if (isSolving) return;
   board.start();
 });
 
 $("#solve-btn").click(() => {
-  if (board.state.length < 1 || isSolving) return;
+  if (board.state.length < 1 || isSolving || board.size > 3) return;
   var startTime = new Date();
   const init = new Solver(board);
   let path = init.solveAStar();
@@ -357,3 +376,22 @@ $("#solve-btn").click(() => {
   }
   execute();
 });
+
+window.addEventListener("resize", updateBoardSize);
+window.addEventListener("load", updateBoardSize);
+
+function updateBoardSize() {
+  if (window.innerWidth > 550) {
+    DEFAULT_BOARD_SIZE = 500;
+    console.log(DEFAULT_BOARD_SIZE);
+    $(".board").css("height", `${DEFAULT_BOARD_SIZE}`);
+    $(".board").css("width", `${DEFAULT_BOARD_SIZE}`);
+    updateBoard();
+  }
+  if (window.innerWidth < 550) {
+    DEFAULT_BOARD_SIZE = window.innerWidth - 50;
+    $(".board").css("height", `${DEFAULT_BOARD_SIZE}`);
+    $(".board").css("width", `${DEFAULT_BOARD_SIZE}`);
+    updateBoard();
+  }
+}

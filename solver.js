@@ -8,6 +8,7 @@ class Solver {
     });
     this.visited = new Set();
     this.limit = 100000;
+    this.test = new Map();
   }
 
   clone(state) {
@@ -15,6 +16,11 @@ class Solver {
   }
 
   expand(current_state) {
+    this.test.set(
+      current_state.state.flat().toString(),
+      (this.test.get(current_state.state.flat().toString()) ?? 0) + 1
+    );
+
     let new_state = null;
     let state = current_state.state;
     let row = current_state.empty_tile_row;
