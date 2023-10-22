@@ -18,6 +18,7 @@ class BoardState {
     /**
      * get the path from state to goal state
      */
+
     return this.path;
   }
 
@@ -31,6 +32,9 @@ class BoardState {
     this.path_states = path_states_clone;
   }
 
+  /**
+   * A misplaced Tiles Heurestics
+   */
   misplacedTiles() {
     console.log(this.state, this.goal_state);
     let result = 0;
@@ -47,6 +51,9 @@ class BoardState {
     return result;
   }
 
+  /**
+   * A Manhattan Distance Heurestics
+   */
   manhattanDistance() {
     var result = 0;
 

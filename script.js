@@ -93,29 +93,33 @@ class Board {
     let [row, col] = this.findTilePos(number);
     let [empty_tile_row, empty_tile_col] = this.findTilePos(0);
     var state_clone = this.clone(this.state);
-
+    let validMove = false;
     //Up
     if (empty_tile_col == col && row - 1 == empty_tile_row) {
       state_clone[empty_tile_row][empty_tile_col] = number;
       state_clone[row][col] = 0;
+      validMove = true;
     }
     //Down
     if (empty_tile_col == col && row + 1 == empty_tile_row) {
       state_clone[empty_tile_row][empty_tile_col] = number;
       state_clone[row][col] = 0;
+      validMove = true;
     }
     //Left
     if (empty_tile_row == row && col - 1 == empty_tile_col) {
       state_clone[empty_tile_row][empty_tile_col] = number;
       state_clone[row][col] = 0;
+      validMove = true;
     }
     //Right
     if (empty_tile_row == row && col + 1 == empty_tile_col) {
       state_clone[empty_tile_row][empty_tile_col] = number;
       state_clone[row][col] = 0;
+      validMove = true;
     }
 
-    if (!this.isAI) {
+    if (!this.isAI && validMove) {
       $(".move")
         .children("span")
         .text(function (i, old_) {
