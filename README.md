@@ -16,11 +16,7 @@ The algorithm can only solve sized 2 and 3 grids quickly. Above that, it require
 
 $~$
 
-**Solutions to the problem**
-- [x] Use different heurestic.
-  - Generally, increases the time to solve grids (Manhattan distance is the quickest) and still can't solve big-sized grids
+**Solution to the problem**
 - [ ] Implement a dynamic programming approach.
 
 $~$
-
-**This repo is open to contributions. Let's collaborate!**
