@@ -12,7 +12,7 @@ $~$
 
 **Limitation of the Algorithm**
 
-The algorithm can only solve sized 2 and 3 grids quickly. Above that, it requires more time and demands space and processing power which, in my case, crashes web browser. 
+The algorithm can only solve sized 2 and 3 grids quickly. Above that, it requires more time and demands space and processing power which, in my case, crashes web browser. Thus, disabling this feature for grid sizes 4 and above.
 
 $~$
 
