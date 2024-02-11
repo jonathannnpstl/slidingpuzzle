@@ -2,7 +2,7 @@
 
 This is a multi-sized grid puzzle and involves an AI to solve the grid.
 
-**Note:** If you experience lag on the web page, just replace the image by uploading your image. Don't ask me why, but it fixes the issue for some reason. 
+**Note:** If you experience lagging on the web page, just replace the image by uploading your image. Don't ask me why, but it fixes the issue for some reason. 
 $~$
 
 **The Algorithm for AI**
