@@ -328,7 +328,7 @@ var board = new Board(DEFAULT_SIZE, DEFAULT_IMAGE);
 
 function updateBoard() {
   $(".board").empty();
-  size = size_el.value;
+  size = size_el.find(":selected").val();
   board = new Board(size ?? DEFAULT_SIZE, url ?? DEFAULT_IMAGE);
   check();
 }

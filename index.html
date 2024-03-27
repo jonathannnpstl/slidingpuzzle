@@ -153,6 +153,10 @@
             padding: 12px 28px;
         }
 
+        button:disabled {
+            cursor: not-allowed;
+        }
+
         .large {
             padding: 18px 44px;
             width: fit-content;
@@ -267,25 +271,26 @@
     <script>
         let uploaded_image = null; //stores the previously uploaed image
 
-        var img_file = document.getElementById('img_file'), img = document.getElementById("art"), size_el = document.getElementById("size"), checkbox_el = document.getElementById("checkbox"), file, url;
-        img_file.addEventListener('change', configure);
-        size_el.addEventListener('change', configure);
+        var img_file = $('#img_file'), img = $("#art"), size_el = $("#size"), checkbox_el = $("#checkbox"), file, url
+        img_file.on('change', configure);
+        size_el.on('change', configure);
 
-        checkbox_el.addEventListener('click', check)
+        checkbox_el.on('click', check)
         function check() {
             $('#checkbox').is(":checked") ? $(".number").css("visibility", "visible") : $(".number").css("visibility", "hidden")
         }
 
         function configure() {
             clearAllAnimation()
-            if (!img_file.files[0] && uploaded_image) return;
-            file = img_file.files[0] ? img_file.files[0] : uploaded_image;
+            if (!img_file.prop('files')[0] && uploaded_image) return;
+            file = img_file.prop('files')[0] ? img_file.prop('files')[0] : uploaded_image;
             uploaded_image = file;
-            size = size_el.value
             url = file ? window.URL.createObjectURL(file) : uploaded_image ? window.URL.createObjectURL(uploaded_image) : null;
+            size = size_el.find(":selected").val();
             img.src = url ?? DEFAULT_IMAGE;
             updateBoard()
             check()
+            $('#solve-btn').prop('disabled', size > 3 ? true : false)
         }
 
 
